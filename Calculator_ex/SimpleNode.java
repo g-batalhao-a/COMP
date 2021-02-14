@@ -9,6 +9,10 @@ class SimpleNode implements Node {
   protected Object value;
   protected Calculator parser;
 
+  //  added
+  public int val;
+  public int Op=0;
+
   public SimpleNode(int i) {
     id = i;
   }
@@ -65,6 +69,11 @@ class SimpleNode implements Node {
 
   public void dump(String prefix) {
     System.out.println(toString(prefix));
+
+    if(this.Op != 0)
+      System.out.println("\t[ "+MyConstants.ops[this.Op-1]+" ]");
+    if(children == null)
+      System.out.println("\t[ "+this.val+" ]");
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {
         SimpleNode n = (SimpleNode)children[i];

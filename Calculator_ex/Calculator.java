@@ -8,7 +8,29 @@ public class Calculator/*@bgen(jjtree)*/implements CalculatorTreeConstants, Calc
         SimpleNode root = myCalc.Expression();
 
         root.dump("");
+        System.out.println("Expression value: "+ myCalc.eval(root));
     }
+
+    int eval(SimpleNode node) {
+    if(node.jjtGetNumChildren() == 0) // leaf node with integer value
+        return node.val;
+    else if(node.jjtGetNumChildren() == 1) // only one child
+        return this.eval((SimpleNode) node.jjtGetChild(0));
+
+    SimpleNode lhs =(SimpleNode) node.jjtGetChild(0); //left child
+    SimpleNode rhs = (SimpleNode) node.jjtGetChild(1); // right child
+
+    switch(node.Op) {
+        case MyConstants.ADD : return eval( lhs ) + eval( rhs );
+        case MyConstants.SUB : return eval( lhs ) -eval( rhs );
+        case MyConstants.MUL : return eval( lhs ) * eval( rhs );
+        case MyConstants.DIV : return eval( lhs ) / eval( rhs );
+        default : // abort
+            System.out.println("Ilegaloperator!");
+            System.exit(1);
+    }
+    return 0;
+}
 
   static final public SimpleNode Expression() throws ParseException {/*@bgen(jjtree) Expression */
   SimpleNode jjtn000 = new SimpleNode(JJTEXPRESSION);
@@ -47,17 +69,19 @@ if (jjtc000) {
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      Expr2();
+      Expr2(1);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 6:
       case 7:{
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case 6:{
           jj_consume_token(6);
+jjtn000.Op = MyConstants.ADD;
           break;
           }
         case 7:{
           jj_consume_token(7);
+jjtn000.Op = MyConstants.SUB;
           break;
           }
         default:
@@ -65,7 +89,7 @@ if (jjtc000) {
           jj_consume_token(-1);
           throw new ParseException();
         }
-        Expr2();
+        Expr2(1);
         break;
         }
       default:
@@ -93,22 +117,24 @@ if (jjtc000) {
     }
 }
 
-  static final public void Expr2() throws ParseException {/*@bgen(jjtree) Expr2 */
+  static final public void Expr2(int sign) throws ParseException {/*@bgen(jjtree) Expr2 */
   SimpleNode jjtn000 = new SimpleNode(JJTEXPR2);
   boolean jjtc000 = true;
   jjtree.openNodeScope(jjtn000);
     try {
-      Expr3();
+      Expr3(sign);
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 8:
       case 9:{
         switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
         case 8:{
           jj_consume_token(8);
+jjtn000.Op = MyConstants.MUL;
           break;
           }
         case 9:{
           jj_consume_token(9);
+jjtn000.Op = MyConstants.DIV;
           break;
           }
         default:
@@ -116,7 +142,7 @@ if (jjtc000) {
           jj_consume_token(-1);
           throw new ParseException();
         }
-        Expr3();
+        Expr3(1);
         break;
         }
       default:
@@ -144,19 +170,22 @@ if (jjtc000) {
     }
 }
 
-  static final public void Expr3() throws ParseException {/*@bgen(jjtree) Expr3 */
-  SimpleNode jjtn000 = new SimpleNode(JJTEXPR3);
-  boolean jjtc000 = true;
-  jjtree.openNodeScope(jjtn000);
+  static final public void Expr3(int sign) throws ParseException {/*@bgen(jjtree) Expr3 */
+                       SimpleNode jjtn000 = new SimpleNode(JJTEXPR3);
+                       boolean jjtc000 = true;
+                       jjtree.openNodeScope(jjtn000);Token t;
     try {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case INTEGER:{
-        jj_consume_token(INTEGER);
+        t = jj_consume_token(INTEGER);
+jjtree.closeNodeScope(jjtn000, true);
+      jjtc000 = false;
+jjtn000.val = sign *Integer.parseInt(t.image);
         break;
         }
       case 7:{
         jj_consume_token(7);
-        Expr3();
+        Expr3(-1);
         break;
         }
       case 10:{
